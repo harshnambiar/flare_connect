@@ -65,10 +65,12 @@ async function startApp(provider) {
         console.error(err)
       }
     })
+    console.log("hi");
   const account = accounts[0];
-  var web3 = new Web3(window.ethereum);
-  const bal = await web3.eth.getBalance(account);
-  console.log(bal);
+  //var web3 = new Web3(window.ethereum);
+  //const bal = await web3.eth.getBalance(account);
+  //console.log("hi");
+  //console.log(bal);
   console.log(account);
   localStorage.setItem("acc",account.toString());
   }
@@ -80,9 +82,10 @@ async function callContract() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xB54A1384d573fb5e5A304dDD4df08E2099E5130D");
+                     "0x30d82EB15DD52C1cECfB8d0E134429B99568825B");
   
   const myAddress = localStorage.getItem("acc");
+  console.log('here');
   contract.methods.fetch()
     .call({from: myAddress})
     .then((result) => {
@@ -95,12 +98,12 @@ async function callContract() {
 window.callContract = callContract;
 
 
-async function updateContract() {
+async function updateCounter() {
   const web3 = new Web3(window.ethereum);
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xB54A1384d573fb5e5A304dDD4df08E2099E5130D");
+                     "0x30d82EB15DD52C1cECfB8d0E134429B99568825B");
   
   const myAddress = localStorage.getItem("acc");
   contract.methods.increment()
@@ -109,4 +112,21 @@ async function updateContract() {
         console.error('Call Error:', error);
     });
 }
-window.updateContract = updateContract;
+window.updateCounter = updateCounter;
+
+async function resetCounter() {
+  const web3 = new Web3(window.ethereum);
+  const abiInstance = ABI.abi;
+  const contract = new web3.eth.Contract(
+                                    abiInstance,
+                     "0x30d82EB15DD52C1cECfB8d0E134429B99568825B");
+
+  const myAddress = localStorage.getItem("acc");
+  contract.methods.reset()
+    .send({from: myAddress, value: 1000, gas: '100000000', gasPrice:100000000000})
+    .catch((error) => {
+      console.log(error);
+        console.error('Call Error:', error);
+    });
+}
+window.resetCounter = resetCounter;
