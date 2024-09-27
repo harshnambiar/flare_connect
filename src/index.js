@@ -78,22 +78,15 @@ async function startApp(provider) {
 
 
 async function callContract() {
-  const web3 = new Web3(window.ethereum);
-  const abiInstance = ABI.abi;
-  const contract = new web3.eth.Contract(
-                                    abiInstance,
-                     "0x24A99A6dcFC3332443037C5a09505731312fD154");
-  
+  const abi = await fetchAbi();
+  //console.log(abi);
+  const w3 = new Web3("https://coston2-api.flare.network/ext/C/rpc");
+  const cnt = new w3.eth.Contract(abi, "0x24A99A6dcFC3332443037C5a09505731312fD154");
   const myAddress = localStorage.getItem("acc");
-  console.log('here');
-  contract.methods.fetch()
-    .call({from: myAddress})
-    .then((result) => {
-        console.log('Return Value:', result);
-    })
-    .catch((error) => {
-        console.error('Call Error:', error);
-    });
+  //console.log(myAddress);
+  const res = await cnt.methods.fetch().call();
+  console.log("Counter: ", res);
+
 }
 window.callContract = callContract;
 
@@ -116,21 +109,22 @@ window.updateCounter = updateCounter;
 
 async function resetCounter() {
   const web3 = new Web3(window.ethereum);
-  web3.providers.HttpProvider.prototype.provideLegacyProvider = () => {  return {    send: (payload, callback) => {      payload.params[0].hardfork = 'london';      window.ethereum.send(payload, callback);    },    sendAsync: (payload, callback) => {      payload.params[0].hardfork = 'london';      window.ethereum.sendAsync(payload, callback);    },  };};
-  const abiInstance = ABI.abi;
+  const abiInstance = await fetchAbi();
+  console.log(abiInstance);
+    const myAddress = localStorage.getItem("acc");
+  //const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
                      "0x24A99A6dcFC3332443037C5a09505731312fD154");
 
-  const myAddress = localStorage.getItem("acc");
-  console.log(myAddress);
+
   const hundredth_eth = BigInt(10000000000000000);
   const pay = web3.utils.toWei('0.01', 'ether');
   try {
 
     console.log(hundredth_eth);
     const res3 = await contract.methods.reset_count()
-                .send({from: myAddress, value: pay, gas: '1000000', gasPrice:1000000000});
+                .send({from: myAddress, value: pay, gas: '1000000', gasPrice:100000000});
   }
   catch (err){
     console.log(err);
@@ -138,3 +132,13 @@ async function resetCounter() {
 
 }
 window.resetCounter = resetCounter;
+
+
+async function fetchAbi(){
+  const base_url = "https://coston2-explorer.flare.network/api";
+  const params =
+    "?module=contract&action=getabi&address=0x24A99A6dcFC3332443037C5a09505731312fD154";
+  const response = await fetch(base_url + params);
+  const abi = JSON.parse((await response.json())["result"]);
+  return abi;
+}
