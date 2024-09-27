@@ -30,7 +30,7 @@ async function connect(code) {
                 chainName: 'Flare Testnet Coston2',
                 chainId: cid,
                 nativeCurrency: { name: 'FLARE', decimals: 18, symbol: 'C2FLR' },
-                rpcUrls: ['https://coston2-api.flare.network/ext/C/rpc']
+                rpcUrls: ['https://coston2.enosys.global/ext/C/rpc']
               }
             ]
           });
@@ -67,10 +67,10 @@ async function startApp(provider) {
     })
     console.log("hi");
   const account = accounts[0];
-  //var web3 = new Web3(window.ethereum);
-  //const bal = await web3.eth.getBalance(account);
+  var web3 = new Web3(window.ethereum);
+  const bal = await web3.eth.getBalance(account);
   //console.log("hi");
-  //console.log(bal);
+  console.log(bal);
   console.log(account);
   localStorage.setItem("acc",account.toString());
   }
@@ -82,7 +82,7 @@ async function callContract() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x30d82EB15DD52C1cECfB8d0E134429B99568825B");
+                     "0x24A99A6dcFC3332443037C5a09505731312fD154");
   
   const myAddress = localStorage.getItem("acc");
   console.log('here');
@@ -103,7 +103,7 @@ async function updateCounter() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x30d82EB15DD52C1cECfB8d0E134429B99568825B");
+                     "0x24A99A6dcFC3332443037C5a09505731312fD154");
   
   const myAddress = localStorage.getItem("acc");
   contract.methods.increment()
@@ -116,17 +116,25 @@ window.updateCounter = updateCounter;
 
 async function resetCounter() {
   const web3 = new Web3(window.ethereum);
+  web3.providers.HttpProvider.prototype.provideLegacyProvider = () => {  return {    send: (payload, callback) => {      payload.params[0].hardfork = 'london';      window.ethereum.send(payload, callback);    },    sendAsync: (payload, callback) => {      payload.params[0].hardfork = 'london';      window.ethereum.sendAsync(payload, callback);    },  };};
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x30d82EB15DD52C1cECfB8d0E134429B99568825B");
+                     "0x24A99A6dcFC3332443037C5a09505731312fD154");
 
   const myAddress = localStorage.getItem("acc");
-  contract.methods.reset()
-    .send({from: myAddress, value: 1000, gas: '100000000', gasPrice:100000000000})
-    .catch((error) => {
-      console.log(error);
-        console.error('Call Error:', error);
-    });
+  console.log(myAddress);
+  const hundredth_eth = BigInt(10000000000000000);
+  const pay = web3.utils.toWei('0.01', 'ether');
+  try {
+
+    console.log(hundredth_eth);
+    const res3 = await contract.methods.reset_count()
+                .send({from: myAddress, value: pay, gas: '1000000', gasPrice:1000000000});
+  }
+  catch (err){
+    console.log(err);
+  }
+
 }
 window.resetCounter = resetCounter;
