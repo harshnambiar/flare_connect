@@ -124,7 +124,7 @@ async function resetCounter() {
 
     console.log(hundredth_eth);
     const res3 = await contract.methods.reset_count()
-                .send({from: myAddress, value: pay, gas: '1000000', gasPrice:100000000});
+                .send({from: myAddress, value: pay});
   }
   catch (err){
     console.log(err);
