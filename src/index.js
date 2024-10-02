@@ -86,6 +86,11 @@ async function callContract() {
   //console.log(myAddress);
   const res = await cnt.methods.fetch().call();
   console.log("Counter: ", res);
+  document.getElementById("res").innerHTML = `
+    Result:
+    <br/>
+    `.concat(res.toString()).concat(`
+  `);
 
 }
 window.callContract = callContract;
@@ -99,11 +104,26 @@ async function updateCounter() {
                      "0x24A99A6dcFC3332443037C5a09505731312fD154");
   
   const myAddress = localStorage.getItem("acc");
-  contract.methods.increment()
-    .send({from: myAddress})
-    .catch((error) => {
-        console.error('Call Error:', error);
-    });
+  try {
+    const res = await contract.methods.increment().send({from: myAddress});
+    document.getElementById("res").innerHTML = `
+    Result:
+    <br/>
+    `.concat('Counter has been incremented').concat(`
+  `);
+  }
+  catch (err){
+    console.log(err);
+    document.getElementById("res").innerHTML = `
+    Result:
+    <br/>
+    `.concat(err.toString()).concat(`
+  `);
+  }
+
+
+
+
 }
 window.updateCounter = updateCounter;
 
@@ -125,9 +145,19 @@ async function resetCounter() {
     console.log(hundredth_eth);
     const res3 = await contract.methods.reset_count()
                 .send({from: myAddress, value: pay});
+                document.getElementById("res").innerHTML = `
+    Result:
+    <br/>
+    `.concat('Counter has been reset!').concat(`
+  `);
   }
   catch (err){
     console.log(err);
+    document.getElementById("res").innerHTML = `
+    Result:
+    <br/>
+    `.concat(err.toString()).concat(`
+  `);
   }
 
 }

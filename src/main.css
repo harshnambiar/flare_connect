@@ -1559,7 +1559,11 @@
     padding: 6em 3em;
   }
   .homeWrapper .homeText {
-    color: #ff6f00;
+    background-color: #ff6f00;
+    color: black;
+    display: inline-block;
+    width: 30%;
+    margin-right: 1%;
     font-family: "Poppins";
     font-weight: 600;
     margin-bottom: 1em;
@@ -1577,6 +1581,15 @@
     font-size:400%;
     font-weight: 600;
     
+  }
+  .homeWrapper .homeText4 {
+    color: #ff6f00;
+    font-family: "Poppins";
+    font-weight: 600;
+    margin-bottom: 1em;
+  }
+  .homeWrapper .actionContainer {
+    width: 100%;
   }
   .homeWrapper .homeImg {
     margin-bottom: 4.5em;
