@@ -2,6 +2,8 @@ import detectEthereumProvider from "@metamask/detect-provider"
 import Web3 from "web3"; 
 import ABI from './abi.json'
 
+
+// connects metamask to the flare testnet (coston2)
 async function connect(code) {
     
   const provider = await detectEthereumProvider()
@@ -76,7 +78,7 @@ async function startApp(provider) {
   }
 }
 
-
+// outputs the current value of the counter
 async function callContract() {
   const abi = await fetchAbi();
   //console.log(abi);
@@ -96,6 +98,7 @@ async function callContract() {
 window.callContract = callContract;
 
 
+// increments the counter by 1
 async function updateCounter() {
   const web3 = new Web3(window.ethereum);
   const abiInstance = ABI.abi;
@@ -127,6 +130,8 @@ async function updateCounter() {
 }
 window.updateCounter = updateCounter;
 
+
+// resets the counter to 0, but requires a payment of 0.01 C2FLR to do so (excluding gas)
 async function resetCounter() {
   const web3 = new Web3(window.ethereum);
   const abiInstance = await fetchAbi();
@@ -164,6 +169,8 @@ async function resetCounter() {
 window.resetCounter = resetCounter;
 
 
+// fetches a registered smart contract ABI from the flare explorer
+// doesn't require a metamask connection
 async function fetchAbi(){
   const base_url = "https://coston2-explorer.flare.network/api";
   const params =
